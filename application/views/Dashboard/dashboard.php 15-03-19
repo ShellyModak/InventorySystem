@@ -1,0 +1,23 @@
+
+<section id="main-content">
+        <section class="wrapper">
+        <div class="row">
+            <div class="col-sm-12">
+                <?php
+if($this->session->userdata('success_msg') !='')
+            {
+?>               <div class="alert alert-success message">
+                <center><strong>Success! </strong><span class=""><?php echo $this->session->userdata('success_msg'); ?></span></center> 
+                </div>
+               <?php
+             $this->session->unset_userdata('success_msg');
+           } 
+?>
+                    
+            </div>
+            </div>
+    </section>
+            </section>
+
+
+     

@@ -1,0 +1,655 @@
+<!--main content start-->
+<style>
+fieldset.group  { 
+ margin: 0; 
+ padding: 0; 
+ margin-bottom: 1.25em; 
+ padding: .125em; 
+} 
+
+fieldset.group legend { 
+ margin: 0; 
+ padding: 0; 
+ font-weight: bold; 
+ margin-left: 20px; 
+ font-size: 100%; 
+ color: black; 
+} 
+
+ul.checkbox  { 
+ margin: 0; 
+ padding: 0; 
+ margin-left: 20px; 
+ list-style: none; 
+} 
+
+ul.checkbox li input { 
+ margin-right: .25em; 
+} 
+
+ul.checkbox li { 
+ border: 1px transparent solid; 
+ display:inline-block;
+ width:20em;
+} 
+
+ul.checkbox li label { 
+ margin-left: ; 
+} 
+
+
+
+</style>
+
+   <section id="main-content">
+       <section class="wrapper">
+       <!-- page start-->
+
+       <div class="row">
+           <div class="col-sm-12">
+             <?php if($this->session->userdata('success_msg') !=''){?>
+                   <div class="alert alert-success message">
+                  <strong>Success! </strong><span class=""><?php echo $this->session->userdata('success_msg'); ?></span> 
+                  </div>
+                  <?php
+                    $this->session->unset_userdata('success_msg');
+                   }?>
+               
+
+                  <section class="panel">
+                   <header class="panel-heading">
+                      Add Sub Admin
+                       <span class="tools pull-right">
+                           <a href="javascript:;" class="fa fa-chevron-down"></a>
+                           <a href="javascript:;" class="fa fa-cog"></a>
+                           <a href="javascript:;" class="fa fa-times"></a>
+                        </span>
+                   </header>
+                   <div class="panel-body">
+                    
+                       <div id="addForm"></div>
+    
+                   </div>
+                
+             </section>
+           
+           </div>
+       <div class="col-sm-12">
+           
+               <section class="panel">
+                   <header class="panel-heading">
+                       Sub Admin Details
+                       <span class="tools pull-right">
+                           <a href="javascript:;" class="fa fa-chevron-down"></a>
+                           <a href="javascript:;" class="fa fa-cog"></a>
+                           <a href="javascript:;" class="fa fa-times"></a>
+                        </span>
+                   </header>
+                  
+                   <div class="panel-body">
+                    <!-- <button type="button" class="btn btn-primary btn pull-right" onclick="location.href='<?php echo base_url(); ?>Adminmanagement/insertSubadmin'">Add new SubAdmin</button> -->
+                   <div class="adv-table">
+                       
+                   <table  class="display table table-bordered table-striped" id="dynamic-table">
+                   <thead>
+                   <tr>
+                                   
+                                    <th class="numeric">Name</th>
+                                  <!--  <th class="numeric">Email</th>-->
+                                    <th class="numeric">Store Id</th>
+                                   <!-- <th class="numeric">Store Access</th>-->
+                                    <th class="numeric">PhoneNo</th>
+                                   <!-- <th class="numeric">Status</th>-->
+                                   <!-- <th class="numeric">PageAccess</th>-->
+                                    <th class="numeric">Option</th>
+                                    
+                                </tr>
+                                </thead>
+                                <tbody>
+          <?php  
+          if(!empty($listing['result'])){ // new added for not empty listing
+          if(count($listing)>0){
+             //echo"<pre>";
+             // print_r($listing);
+         foreach ($listing['result'] as $row)  
+         { 
+          //for store access name//
+              $name=array();
+              $storeaccess=$row->storeIdAccess;
+              $newstorename=explode(",",$storeaccess);
+              $total=count($newstorename);
+            for($i=0;$i<$total;$i++){
+              $storename=$newstorename[$i];
+              $wherearr=array('id'=>$storename);
+              $store_name=$this->Common_model->getAllDataWithMultipleWhere('store',$wherearr,'id');
+              if(!empty($store_name['result'])){
+              array_push($name,$store_name['result'][0]->name);
+            }
+            }
+            $newname=implode(",",$name);
+            //echo $newname;die;
+          if($row->status==1 || $row->status==0){
+            ?>
+                <tr>  
+                <td style="color: black"><?php echo ucfirst($row->Name);?></td> 
+             <!-- <td style="color: black"><?php echo ucfirst($row->email);?></td>-->
+              <td style="color: black"><?php echo ucfirst($row->Store_name);?></td>
+             <!-- <td style="color: black"><?php echo ucfirst($newname);?></td>-->
+              <td style="color: black"><?php echo $row->phoneno;?></td> 
+            <!-- <td><?php //echo $row->status;?></td> -->
+
+             <!-- <td>
+                                        <?php
+                                    //echo $reviewDtls->status ;
+                                        if($row->status == 1)
+                                        {
+                                        ?>
+                                        <span style="cursor:pointer;float:center;color: black" title="Active Review" onclick="changeStauts('<?php echo $row->id;?>', 0);">Active
+                                           <i class="fa fa-check-circle"></i>
+                                        </span>
+                                        <?php
+                                        } 
+                                        else
+                                        {
+                                        ?>
+                                        <span style="cursor:pointer;float:center;color: black" title="Inactive Review" onclick="changeStauts('<?php echo $row->id;?>', 1);">Inactive
+                                          <i class="fa fa-ban"></i>
+                                        </span>
+                                        <?php
+                                        }
+                                        ?>
+                                    </td>  -->
+         <!--   <td><?php echo $row->pageAccess;?></td>-->
+          
+        <td>
+        <i class="fa fa-edit" onclick="editForm(<?php echo $row->id ;?>);"></i>
+        <!-- <a href="<?php echo base_url(); ?>Adminmanagement/editSubAdmin/<?php echo $row->id ;?>"><i class="fa fa-edit"></i>
+        </a> -->
+        <i class="fa fa-trash-o" aria-hidden="true" onclick="deleteSubAdmin('<?php echo $row->id;?>');"></i>
+                                        <?php
+                                    //echo $reviewDtls->status ;
+                                        if($row->status == 1)
+                                        {
+                                        ?>
+                                           <i class="fa fa-check-circle" onclick="changeStauts('<?php echo $row->id;?>', 0);"></i>
+                                    
+                                        <?php
+                                        } 
+                                        else
+                                        {
+                                        ?>
+                                          <i class="fa fa-ban" onclick="changeStauts('<?php echo $row->id;?>', 1);"></i>
+                                      
+                                        <?php
+                                        }
+                                        ?>
+        </td>
+
+<!--         <button type="button" class="btn btn-primary" onclick="location.href='<?php echo base_url(); ?>Adminmanagement/editSubAdmin/<?php echo $row->id ;?>'">Edit</button> -->
+                    <!-- <button type="button" class="btn btn-primary" onclick="deleteSubAdmin('<?php echo $row->id;?>');">Delete</button></td> -->
+             </tr> 
+        <?php 
+            }
+          }
+        }
+      }
+         ?>
+                                
+                                </tbody>
+                   </table>
+                      
+                   </div>
+                   </div>
+                   
+               </section>
+    </div>
+    </div>
+       <!-- page end-->
+       </section>
+   </section>
+   <!--main content end-->
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+   <script type="text/javascript">
+   $(document).ready(function() {
+    newform('');
+				var email_error=0;
+				var user_error=0;
+});
+   
+
+   function newform(id){
+    {
+      //alert(id);
+          $.ajax({
+                    url:"<?php echo base_url();?>Adminmanagement/addForm",   
+                    data:{id:id},
+                    type:"POST",            
+                    dataType:"text",
+                    async: false,
+                    success:function(response)
+                    {   
+                        $('#addForm').html(response);
+                         
+                    }
+                                                 
+                                      
+                                        
+                });
+     }
+   }
+   function editForm(id)
+     {
+          $.ajax({
+                    url:"<?php echo base_url();?>Adminmanagement/edit",   
+                    data:{id:id},
+                    type:"POST",            
+                    dataType:"text",
+                    async: false,
+                    success:function(response)
+                    {   
+                        $('#addForm').html(response);
+                         
+                    }
+                                                 
+                                      
+                                        
+                });
+     } 
+
+
+   function deleteSubAdmin(id)
+{
+    if(confirm("Do you want to delete this unit?"))
+    {
+        window.location.href="<?php echo base_url();?>Adminmanagement/deleteData/"+id;
+    }
+}
+   function changeStauts(id,status){
+    
+    var confirmstatus=confirm('Are you sure you want to change status');
+    if(confirmstatus)
+    {
+        location.href="<?php echo base_url();?>Adminmanagement/changeStatusReview/"+id+"/"+status;
+    }
+  }
+//==============================validations for add subadmin===============================//
+function check() {
+    //alert('hii');
+        //var regEmail = /^([a-z0-9_.+-])+\@(([a-z0-9-])+\.)+([a-z0-9]{2,4})+$/;
+        var username=$('#user_name').val().trim();
+        //alert(username);
+        $.ajax({
+            type:'post',
+             url: '<?php echo base_url();?>Adminmanagement/username_check',
+            data: { username:username},
+  success: function (response){
+    //alert(response);
+    if (response>0) {
+					user_error=1;
+    $('#user_name_error').text("Username already exists");
+    $('#user_name_error').css('color','red');
+    $('#btn').prop('disabled',true);
+    }else{
+						user_error=0;
+        //$('#user_name_error').text('');
+       $('#btn').prop('disabled',false); 
+    }
+  }
+});
+    // else{
+    //     $('#email_title_error').text('please enter a valid email');
+    //         $('#email_title_error').css('color','red');
+    // }else{
+    //     $('#email_title_error').text('email cannot be empty');
+    //     $('#email_title_error').css('color','red');
+
+    // }
+    }
+    function check_email(){
+       var email=$('#email_address').val();
+       if(email!=''){
+        $.ajax({
+            type:'post',
+             url: '<?php echo base_url();?>Adminmanagement/email_check',
+            data: { email:email},
+  success: function (response){
+    //alert(response);
+    if (response>0) {
+					email_error=1;
+    $('#email_address_error').text("Email already exists");
+    $('#email_address_error').css('color','red');
+    $('#btn').prop('disabled',true);
+    }else{
+								email_error=0;
+        $('#email_address_error').text('');
+       $('#btn').prop('disabled',false); 
+    }
+  }
+});
+      }else{
+       // $('#email_address_error').text('');
+        $('#btn').prop('disabled',false);
+      }
+    }
+
+// $(document).on('keypress','.test',function(evt){
+//    var charCode = (evt.which) ? evt.which : evt.keyCode;
+//    if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57))
+//        {
+//            return false;
+//        }
+//        else
+//        {
+//            return true;
+//        }
+// });
+
+ function checknumber(){
+            var phone=$('#phoneno').val();
+        if(isNaN(phone)){
+           alert('Please enter number');
+            $('#phoneno').val('');
+        }
+    }
+     /*function validate_frm(){
+        $('#name_error').html('');
+        $('#username_error').html('');
+         $('#password_error').html('');
+         $('#email_error').html('');
+        var error=0;
+        var pregmatch = /^(\s)*[A-Za-z]+((\s)?((\'|\-|\.)?([A-Za-z])+))*(\s)*$/;
+        //var regEmail = /^([a-z0-9_.+-])+\@(([a-z0-9-])+\.)+([a-z0-9]{2,4})+$/;
+        var emailpattern =/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
+        var phone=/^\d{10}$/;
+         var name=$('#name').val();
+         var username=$('#username').val();
+         var password=$('#password').val();
+         var phoneno=$('#phoneno').val();
+         var email=$('#email').val();
+
+         if(!pregmatch.test(name)){
+            $('#name_error').html('Please insert a valid name');
+            error++;
+         }
+         
+          if(username==''){
+            $('#username_error').html('Please enter a username');
+            error++;
+         }
+          if(password==''){
+            $('#password_error').html('Please enter a password');
+            error++;
+         }
+         if(password.length<6){
+            $('#password_error').html('Please enter a password of length 6');
+            error++;
+         }
+         if(phoneno!=''){
+         if(phoneno.length!=10){
+            $('#phoneno_error').html('Please insert a 10 digit mobile number');
+            error++;
+         }
+        }
+         if(email!=''){
+          var emailpattern =/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
+         if(!emailpattern.test(email)){
+          $('#email_error').html('Please enter a valid email');
+            error++;
+         }
+       }else{
+        $('#email_error').html('');
+       }
+
+         if(error==0){
+            //$('#updt').submit();
+            return true;
+         }else{
+          return false;
+         }
+
+     }*/
+					
+					
+					
+					
+					function validate_frm(){
+						
+					var v1=0;
+		        	$(".test").each(function()
+		       		 {
+			        	var elementvalue= $(this).val();
+												//alert(elementvalue);
+			       		var elementid=$(this).attr('id');
+												//alert(elementid);
+			        	var elementlabel=$(this).attr('label');
+												//alert(elementlabel);
+												
+													var fields = $("input[name='pageaccess[]']").serializeArray().length;
+						alert(fields);
+			       		if(elementvalue.search(/\S/) ==-1)
+			       		 {
+																	//alert(elementid);
+                             if(elementid=="name"||elementid=="email_address"||elementid=="user_name"||elementid=="password")
+                            {
+																																$("#"+elementid+"_error").html(elementlabel+" is needed");
+																																v1++;
+                            }else{
+																													$("#"+elementid+"_error").html(elementlabel+"");
+																												}
+																												
+													}
+													
+                        
+													
+            else if(elementid=="email")
+			        	{
+				        	var pattern=/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
+				        	if(!pattern.test(elementvalue)){ 
+
+				        		$("#"+ elementid+"_error").html("Correct email is needed");
+				        		v1++;
+				        	}
+				        	
+											}
+                        
+            else if(elementid=="phoneno")
+			        	{
+				        	var pattern=/^[0-9]+$/;
+				        	
+																		if(!pattern.test(elementvalue) || (elementvalue.length!=10) )
+																	{ 
+																					$("#phoneno_error").html("Correct phonenumber is needed");
+																					v1++;
+																 	}
+															else 
+															{
+																				$("#phoneno_error").html("");
+																}
+												} 
+                        
+         else 
+								{
+									$("#"+ elementid+"_error").html("");
+								}
+                        
+									});
+											
+									
+								
+												//alert(v1);
+											check();
+											check_email();
+											if(user_error==1){
+												v1++;
+											}
+											if(email_error==1){
+												v1++;
+											}
+								
+		      
+								
+							
+								
+				
+              
+								
+							//alert(v1);
+								if(v1==0){
+            $('#updt').submit();
+         }
+
+	//return (v1 === 0)?true:false;
+	
+
+		        	// alert(v1);
+		        	// if(v1===0){
+		        	// 	$("#myform").submit();
+		        	// }
+
+					}
+//==============================================end for validation add subadmin==================//
+
+//========================================validations for edit subadmin=============================//
+function edit_showHidePassword(){
+          var button_val=$('#view_pass').val();
+            if(button_val == 'View')
+            {
+                $('#view_pass').val('Hide');
+                //$('#password').val(password);
+                $('#password').attr("type","text");
+            }
+            if(button_val == 'Hide')
+            {
+                $('#view_pass').val('View');
+                $('#password').attr("type", "password");
+            }
+     }
+
+     function edit_checknumber(){
+            var phone=$('#phoneno').val();
+        if(isNaN(phone)){
+           alert('Please enter number');
+           var phone=$('#phoneno').val();
+           var phn=phone.slice(0,-1);
+            $('#phoneno').val(phn);
+        }
+    }
+
+    function edit_check() {
+        var id= $('#userid').val();
+        var username=$('#username').val().trim();
+        $.ajax({
+            type:'post',
+             url: '<?php echo base_url();?>Adminmanagement/username_checking',
+            data: { id:id, username:username},
+  success: function (response){
+    //alert(response);
+    if (response>0) {
+    $('#username_error').text("Username already exists");
+    $('#username_error').css('color','red');
+    $('#btn').prop('disabled',true);
+    }else{
+        $('#username_error').text('');
+       $('#btn').prop('disabled',false); 
+    }
+  }
+});
+    }
+
+     function edit_check_email(){
+       var email=$('#email').val();
+       var id= $('#userid').val();
+       //alert(email);
+       if(email!=''){
+        $.ajax({
+            type:'post',
+             url: '<?php echo base_url();?>Adminmanagement/email_checking',
+            data: { id:id, email:email},
+  success: function (response){
+    //alert(response);
+    if (response>0) {
+        //alert(response);
+    $('#email_error').text("Email already exists");
+    $('#email_error').css('color','red');
+    $('#btn').prop('disabled',true);
+    }else{
+        $('#email_error').text('');
+       $('#btn').prop('disabled',false); 
+    }
+  }
+});
+      }else{
+        $('#email_error').text('');
+        $('#btn').prop('disabled',false);
+      }
+    }
+
+
+
+     function edit_validate_frm(){
+        $('#name_error').html('');
+        $('#username_error').html('');
+         $('#password_error').html('');
+         $('#email_error').html('');
+        var error=0;
+        var pregmatch = /^(\s)*[A-Za-z]+((\s)?((\'|\-|\.)?([A-Za-z])+))*(\s)*$/;
+        //var regEmail = /^([a-z0-9_.+-])+\@(([a-z0-9-])+\.)+([a-z0-9]{2,4})+$/;
+        var emailpattern =/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
+        var phone=/^\d{10}$/;
+         var name=$('#name').val();
+         var username=$('#username').val();
+         var password=$('#password').val();
+         var phoneno=$('#phoneno').val();
+         var email=$('#email').val();
+
+         if(!pregmatch.test(name)){
+            $('#name_error').html('Please insert a valid name');
+            error++;
+         }
+         
+          if(username==''){
+            $('#username_error').html('Please enter a username');
+            error++;
+         }
+          if(password==''){
+            $('#password_error').html('Please enter a password');
+            error++;
+         }
+         if(password.length<6){
+            $('#password_error').html('Please enter a password of length 6');
+            error++;
+         }
+         if(phoneno!=''){
+         if(phoneno.length!=10){
+            $('#phoneno_error').html('Please insert a 10 digit mobile number');
+            error++;
+         }
+        }
+         if(email!=''){
+          var emailpattern =/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
+         if(!emailpattern.test(email)){
+          $('#email_error').html('Please enter a valid email');
+            error++;
+         }
+       }else{
+        $('#email_error').html('');
+       }
+
+         if(error==0){
+            //$('#updt').submit();
+            return true;
+         }else{
+          return false;
+         }
+     } 
+//=====================================end for validation edit subadmin====================================//
+
+
+</script>
+<!-- <script type="text/javascript">
+//new added
+  $('#dynamic-table').dataTable({
+      "order": [[ 0, "asc" ]],
+  });
+  //end for new added
+  </script> -->

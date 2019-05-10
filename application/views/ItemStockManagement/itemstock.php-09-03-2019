@@ -1,0 +1,150 @@
+<!--main content start-->
+   <section id="main-content">
+       <section class="wrapper">
+       <!-- page start-->
+
+       <div class="row">
+           <div class="col-sm-12">
+               <section class="panel">
+                   <header class="panel-heading">
+                       Item Stock 
+                       <span class="tools pull-right">
+                           <a href="javascript:;" class="fa fa-chevron-down"></a>
+                           <a href="javascript:;" class="fa fa-cog"></a>
+                           <a href="javascript:;" class="fa fa-times"></a>
+                        </span>
+                   </header>
+                   <div class="panel-body">
+                     <button type="button" class="btn btn-primary btn pull-right" onclick="location.href='<?php echo base_url(); ?>ItemStockManagement/addOrder'">Add Order</button>
+                   <div class="adv-table">
+                       
+                   <table  class="display table table-bordered table-striped" id="dynamic-table">
+                   <thead>
+                   <tr>
+                                   
+                                    <th class="numeric">Item Name</th>
+                                    <th class="numeric">Stock</th>
+                                    <th class="numeric">Quantity</th>
+                                   <!-- <th class="numeric">PageAccess</th>-->
+                                    <th class="numeric">Option</th>
+                                    
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    <?php  
+          if(count($listing)>0){
+             //echo"<pre>";
+             // print_r($listing);
+         foreach ($listing['result'] as $row)  
+         { 
+            //echo "<pre>";print_r($row);die;
+          if($row->status==1 || $row->status==0){
+            ?>
+                <tr>  
+                <td><?php echo $row->item_name;?></td> 
+              <td><input  type="text" value="<?php echo $row->stock; ?>"  placeholder="Stock" class="form-control test1" name="stock" id="stock" label="stock" readonly></td>
+              <td><input  type="number" value="0" min=0 placeholder="Quantity" class="form-control test2" name="quantity" id="quantity" label="quantity" onkeyup="check()"></td>
+          
+      <td><button type="button" id="<?php echo $row->item_id ?>"class="btn btn-primary">Save</button>
+                    <!-- <button type="button" class="btn btn-primary" onclick="deleteSubAdmin('<?php echo $row->id;?>');">Delete</button></td> -->
+             </tr> 
+        <?php }
+          }
+        }
+         ?>
+                                
+                                </tbody>
+                   <tfoot>
+                   </tfoot>
+                   </table>
+                       
+                   </div>
+                   </div>
+               </section>
+           </div>
+       </div>
+
+                  
+       <!-- page end-->
+       </section>
+   </section>
+   <!--main content end-->
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+   <script>
+   function check(){
+      //alert('hii');
+      var qty=$('#quantity').val();
+      if(qty<0){
+        alert('please enter a positive quantity');
+        $('#quantity').val('');
+      }
+    }
+   //function updatestock()
+//{
+    // var stock=parseInt($('#stock').val());
+    // var quantity=parseInt($('#quantity').val());
+    // //alert(stock);alert(quantity);
+    // var stock=stock+quantity;
+    // $('#stock').val(stock);
+    //========================
+    $(".btn").click(function() {
+      var quantity=$("#quantity").val();
+      if(quantity!=''){
+    var currow=$(this).closest('tr');
+    var id=(this.id);
+    //alert(id);
+    var itemName=currow.find('td:eq(0)').text();
+    //alert(itemName);
+    var stock=parseInt(currow.find('td:eq(1)').find('.test1').val());
+    //alert(stock);
+    var quantity=parseInt(currow.find('td:eq(2)').find('.test2').val());
+    //alert(quantity);
+     var stock1=stock+quantity;
+     if(stock1 < 0){
+      stock1=0;
+     }
+     //currow.find('td:eq(1)').find('.test1').val(stock1);
+     //currow.find('td:eq(2)').find('.test2').val('');
+
+    $.ajax({
+            type:'post',
+             url: '<?php echo base_url();?>ItemStockManagement/stockupdate',
+            data: { id:id, stock:stock1},
+  success: function (response){
+    //alert(response);
+     if (response>0) {
+     currow.find('td:eq(1)').find('.test1').val(stock1);
+     currow.find('td:eq(2)').find('.test2').val('');
+   }else{
+    currow.find('td:eq(1)').find('.test1').val('');
+     currow.find('td:eq(2)').find('.test2').val('');
+   }
+    // $('#username_error').text("username already exists");
+    // $('#username_error').css('color','red');
+    // $('#btn').prop('disabled',true);
+    // }else{
+    //     $('#username_error').text('');
+    //    $('#btn').prop('disabled',false); 
+    // }
+  }
+});
+  }else{
+    alert('please enter quantity');
+  }
+
+    
+});
+    
+//}
+   function changeStauts(id,status){
+    
+    var confirmstatus=confirm('Are you sure you want to change status');
+    if(confirmstatus)
+    {
+        location.href="<?php echo base_url();?>Adminmanagement/changeStatusReview/"+id+"/"+status;
+    }
+
+
+
+}
+</script>

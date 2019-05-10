@@ -1,0 +1,477 @@
+<?php
+class NewModel extends CI_Model  {
+       
+     
+    public function insert($table,$data)
+    {
+     $this->db->insert($table,$data);
+    //return  $query-result();
+    }
+     public function getDatanew($table,$rowno,$uid){ 
+            
+        $this->db->select('*');
+        $this->db->from($table);
+       
+        $this->db->where('type','1');
+        $this->db->where('user_id',$uid); 
+         $this->db->limit($rowno);
+        $query = $this->db->get();  
+        // echo $this->db->last_query();die;
+        $result['num_row'] = $query->num_rows();
+        $result['result'] = $query->result();
+        return $result;
+   }    
+    public function fetch_data($table,$condition=array()){
+        if(!empty($condition))
+        {
+            $this->db->where($condition);
+        }
+        $query = $this->db->get($table);
+        return $query->result();
+    }
+    public function login_user($username,$password,$table){
+        
+        $this->db->select('id');
+       
+        $this->db->where('Store_name',$username);
+        $this->db->where('password',md5($password));
+        $query = $this->db->get($table);
+        if($query->result()){
+             $this->session->set_userdata('is_loged_in', '1');
+            return $query->result();
+        
+        }
+        else{
+            $this->session->set_userdata('is_loged_in', '');
+            return array();
+        }
+    }
+    public function login_user_details($id){
+        $this->db->select('*');
+       $this->db->where('id',$id);
+        $query = $this->db->get('details');
+        return $query->result();
+    }
+    public function fetch_data_dept($id,$table){
+        $this->db->select('dept_name');
+         $this->db->where('dept_id',$id);
+        $query = $this->db->get($table);
+        return $query->result();
+    }
+    public function fetch_data_vendor($arry,$table){
+        $this->db->select('*');
+      // $this->db->select('status');
+         $this->db->where_in('id',$arry);
+        $query = $this->db->get($table);
+        return $query->result();
+    }
+   public function update_details1($id,$name,$email,$dept,$gender,$phone_no,$skills,$file_name){
+       
+     $data_get=array(
+                    'name' => $name,
+                    'email'=>$email,
+                    'dept'=>$dept,
+                    'gender'=>$gender,
+                    'phone_no'=>$phone_no,
+                    'skills'=>$skills,
+                    'Img'=>$file_name
+              );
+       
+       //print_r($data_get);die;
+      // echo "successfull";
+        $this->db->where('id', $id);
+        $updt=$this->db->update('details', $data_get);
+    //  echo $this->db->last_query();die;
+        return true; 
+}
+    public function update_details2($id,$name,$email,$dept,$gender,$phone_no,$skills){
+       
+     $data_get=array(
+                    'name' => $name,
+                    'email'=>$email,
+                    'dept'=>$dept,
+                    'gender'=>$gender,
+                    'phone_no'=>$phone_no,
+                    'skills'=>$skills,
+              );
+       
+       //print_r($data_get);die;
+      // echo "successfull";
+        $this->db->where('id', $id);
+        $updt=$this->db->update('details', $data_get);
+    //  echo $this->db->last_query();die;
+        return true; 
+}
+    
+    public function checkDuplicateEmail($post_email) {
+            $this->db->where('email', $post_email);
+            $query = $this->db->get('details');
+            $count_row = $query->num_rows();
+            if ($count_row > 0) {
+                 return FALSE; 
+                 } 
+            
+            else {
+
+                    return TRUE; 
+                 }
+}
+    function filename_exists($name,$table)
+    {
+        $this->db->select('unit_name'); 
+        $this->db->from($table);
+        $this->db->where('unit_name', $name);
+        $query = $this->db->get();
+        $result = $query->num_rows();
+        return $result;
+    }
+    function material_exists($name,$table,$store_id)
+    {
+        $this->db->select('material_name'); 
+        $this->db->from($table);
+        $this->db->where('material_name', $name);
+        $this->db->where('store_id', $store_id);
+        $query = $this->db->get();
+        $result = $query->num_rows();
+        return $result;
+    }
+    function item_exists($name,$table,$store_id)
+    {
+        $this->db->select('item_name'); 
+        $this->db->from($table);
+        $this->db->where('item_name', $name);
+        $this->db->where('store_id', $store_id);
+        
+        $query = $this->db->get();
+        $result = $query->num_rows();
+        return $result;
+    }
+    public function select()  
+      {  
+         $query = $this->db->get('details');  
+         $result=$query->result();
+        return $result;
+      } 
+     public function get_id(){
+        $this->db->select('id');
+          $this->db->from('details');
+        $query = $this->db->get();
+        return $query->result();
+    }
+//    function get_search() {
+//      $match = $this->input->post('search');
+//      $this->db->like('name',"%".$match."%");
+//      $this->db->or_like('email',"%".$match."%");
+//      $this->db->or_like('phone_no',"%".$match."%");
+//      $query = $this->db->get('details');
+//      return $query->result();
+//}
+    public function getData($rowno,$rowperpage,$search="",$table,$search_value) {
+ 
+        $this->db->select('*');
+
+         $this->db->from($table);
+         $this->db->like($search_value,$search);
+       // $skill = $this->db->get();
+       // $skill_arry=$skill->result();
+        //print_r($skill_arry);
+        
+   
+
+    
+//        $this->db->from('details');
+//         $this->db->join('department', 'dept_id = dept');
+//        if($search != ''){
+//            $this->db->like('name',$search);
+//            $this->db->or_like('email',$search);
+//            $this->db->or_like('phone_no',$search);
+//            $this->db->or_like('dept_name',$search);
+//            foreach ($skill_arry as $row){
+//                $this->db->or_where("FIND_IN_SET(". $row->skill_id.",skills)!=",0);
+//
+//            }
+//        
+//        }
+
+    $this->db->limit($rowperpage, $rowno); 
+    $query = $this->db->get();
+     //echo $this->db->last_query();die;   
+        $result['num_row'] = $query->num_rows();
+        $result['result'] = $query->result();
+        return $result;
+    //return $query->result();
+  }
+
+  // Select total records
+  public function getrecordCount($search = '',$table,$search_value) {
+    //$this->db->distinct();
+     $this->db->select('*');
+
+        $this->db->from($table);
+         $this->db->like($search_value,$search);
+//        $skill = $this->db->get();
+//        $skill_arry=$skill->result();  
+//      
+//   
+//    $this->db->from('details');
+//    $this->db->from('skills');
+//    $this->db->join('department', 'dept_id = dept');
+//    
+// 
+//    if($search != ''){
+//     $this->db->like('name',$search);
+//      $this->db->or_like('email',$search);
+//        $this->db->or_like('phone_no',$search);
+//         $this->db->or_like('dept_name',$search);
+//         foreach ($skill_arry as $row){
+//           $this->db->or_where("FIND_IN_SET(". $row->skill_id.",skills)!=",0);
+//            
+//        }
+//    }
+//      $this->db->group_by('details.id');
+//      $this->db->order_by('details.id', 'DESC');
+    $query = $this->db->get();
+    $result = $query->result_array();
+ 
+    return $query->num_rows();
+  }
+    public function getrecordCount1($search = '',$table) {
+    //$this->db->distinct();
+     $this->db->select('*');
+
+        $this->db->from($table);
+         $this->db->like('item_name',$search);
+//        $skill = $this->db->get();
+//        $skill_arry=$skill->result();  
+//      
+//   
+//    $this->db->from('details');
+//    $this->db->from('skills');
+//    $this->db->join('department', 'dept_id = dept');
+//    
+// 
+    if($search != ''){
+     $this->db->like('item_name',$search);
+      $this->db->or_like('stock',$search);
+        $this->db->or_like('tax',$search);
+         $this->db->or_like('final_price',$search);
+//         foreach ($skill_arry as $row){
+////           $this->db->or_where("FIND_IN_SET(". $row->skill_id.",skills)!=",0);
+////            
+       }
+//    }
+//      $this->db->group_by('details.id');
+//      $this->db->order_by('details.id', 'DESC');
+    $query = $this->db->get();
+    $result = $query->result_array();
+ 
+    return $query->num_rows();
+  }
+
+ public function getrecordCountforpagination($table,$del_status) {
+  
+     $this->db->select('*');
+     $this->db->from($table);
+     $this->db->where('status <> ', $del_status);
+ 
+    $query = $this->db->get();
+    $result = $query->result_array();
+    
+    return $query->num_rows();
+  }
+public function getDataforsearch($rowno,$rowperpage,$search="",$table) {
+ 
+        $this->db->select('*');
+
+        $this->db->from($table);
+      
+       if($search != ''){
+           $this->db->like('offer_type',$search);
+           $this->db->or_like('offer_purpose',$search);
+           $this->db->or_like('amount',$search);
+           $this->db->or_like('min_amount',$search);
+           $this->db->or_like('note',$search);
+
+        
+        
+       }
+
+    $this->db->limit($rowperpage, $rowno); 
+    $query = $this->db->get();
+     //echo $this->db->last_query();die;   
+        $result['num_row'] = $query->num_rows();
+        $result['result'] = $query->result();
+        return $result;
+    //return $query->result();
+  }
+  public function getrecordCountforsearch($search = '',$table) {
+    //$this->db->distinct();
+     $this->db->select('*');
+
+        $this->db->from($table);
+ 
+    $query = $this->db->get();
+    $result = $query->result_array();
+ 
+    return $query->num_rows();
+  }
+public function getData1($rowno,$rowperpage,$search="",$table) {
+ 
+        $this->db->select('*');
+
+        $this->db->from($table);
+         $this->db->like('item_name',$search);
+       // $skill = $this->db->get();
+       // $skill_arry=$skill->result();
+        //print_r($skill_arry);
+        
+   
+
+    
+//        $this->db->from('details');
+//         $this->db->join('department', 'dept_id = dept');
+       if($search != ''){
+     $this->db->like('item_name',$search);
+      $this->db->or_like('stock',$search);
+        $this->db->or_like('tax',$search);
+         $this->db->or_like('final_price',$search);
+//            foreach ($skill_arry as $row){
+//                $this->db->or_where("FIND_IN_SET(". $row->skill_id.",skills)!=",0);
+//
+            }
+//        
+//        }
+
+    $this->db->limit($rowperpage, $rowno); 
+    $query = $this->db->get();
+     //echo $this->db->last_query();die;   
+        $result['num_row'] = $query->num_rows();
+        $result['result'] = $query->result();
+        return $result;
+    //return $query->result();
+  }
+
+public function getDataforpagelisting($rowno,$rowperpage,$table,$del_status) {
+ 
+        $this->db->select('*');
+
+        $this->db->from($table);
+        $this->db->where('status <> ', $del_status);
+        $this->db->order_by("id", "DESC");
+
+    $this->db->limit($rowperpage, $rowno); 
+    $query = $this->db->get();
+     //echo $this->db->last_query();die;   
+        $result['num_row'] = $query->num_rows();
+        $result['result'] = $query->result();
+        return $result;
+    //return $query->result();
+  }
+
+    function image_name($id){
+    $this->db->select('Name');
+         $this->db->where('id', $id);
+          $this->db->from('images');
+        $query = $this->db->get();
+       // echo $id;
+       // print_r($query->result());
+        return $query->result();
+    }
+    function delete_image($id){
+    $this->db->where('id', $id);
+    $this->db->delete('images');
+}
+public function fetch_data_name($id,$table){
+        $this->db->select('Name');
+         $this->db->where('id',$id);
+        $query = $this->db->get($table);
+        return $query->result();
+    }
+    public function fetch_data_name_user($id,$table){
+        $this->db->select('name','Img');
+         $this->db->where('id',$id);
+        $query = $this->db->get($table);
+        return $query->result();
+    }
+     public function ForgotPassword($email)
+ {
+        $this->db->select('*');
+        $this->db->from('details'); 
+        $this->db->where('email', $email); 
+        $query=$this->db->get();
+        return $query->row_array();
+ }
+ public function sendpassword($data)
+{
+     $this->load->library('email');
+       $email = $data['email'];
+     $id=$data['id'];
+//echo $id;
+        $config = Array(
+    'protocol' => 'smtp',
+    'smtp_host' => 'ssl://smtp.googlemail.com',
+    'smtp_port' => 465,
+    'smtp_user' => 'shelly.shaw@esolzmail.com',
+    'smtp_pass' => 'shellyshawmodakesolz',
+    'mailtype'  => 'html', 
+    'charset'   => 'iso-8859-1'
+); 
+     
+        $this->load->library('email', $config);
+        $this->email->set_newline("\r\n");
+
+        $this->email->initialize($config);
+        //name = $this->input->post('name');
+       // $to_email = $this->input->post('email');
+       // $sub=$this->input->post('sub');
+       // $msg=$this->input->post('message');
+
+        $this->email->from('shelly.shaw@esolzmail.com','Shelly');
+        
+        $this->email->to($email); 
+
+        $this->email->subject('password change123');
+        $msg= "<a href=".base_url().'Upto_user_login_controller/newview/'.$id.">".click.here."</a>";
+    
+        $this->email->message($msg);  
+
+        //$this->email->send();
+       // echo"successfully send mail";
+        if($this->email->send())
+            $this->session->set_flashdata("email_sent","Congragulation Email Send Successfully.");
+        else
+            $this->session->set_flashdata("email_sent","You have encountered an error");
+
+        echo $this->email->print_debugger();
+
+       // $this->load->view('Registration/email');
+    }
+    public function check_password($password,$id)
+   {
+                   
+                   //$table='details';
+                   $this->db->where('id',$id);
+                   $q = $this->db->get('details');
+                   //echo $password;
+                   $p=$q->row_array();
+                    //print_r($p);die;
+                   if($p['password']==$password){
+                     return 1;  
+                   }
+                   else{
+                      return 0;   
+                   }
+               
+    }
+    
+    
+     public function MaterialList() {
+        $this->db->select('material_name', 'unit_id', 'vendor_id');
+        $this->db->from('RawMaterial');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+}
+    
+    
+?>

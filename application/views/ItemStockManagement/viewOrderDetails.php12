@@ -1,0 +1,142 @@
+
+<section id="main-content">
+        <section class="wrapper">
+        <div class="row">
+            <div class="col-sm-12">
+                    <section class="panel">
+                        <header class="panel-heading">
+                           Order Details
+                            <button type="button" class="btn btn-primary btn pull-right" onclick="location.href='<?php echo base_url(); ?>Orderdetails'">Back</button></header>
+         
+                       
+              
+         <?php           $whereArr=array('order_id'=>$this->uri->segment(3));
+                    $item =$this->Common_model->getAllDataWithMultipleWhere('Order',$whereArr,'order_id'); ?>          
+                        
+        <div class="panel-body">
+            <div class="position-center">
+
+
+            <div class="form-group">
+
+                <label class="control-label">Order No</label>    
+                <input  type="text" class="form-control test"  value="<?php echo $item['result'][0]->order_no; ?>" readonly >
+                <br>
+
+                </div>
+                                
+               <div class="form-group">
+
+                <label class="control-label">Customer Name</label>    
+                <input  type="text" class="form-control test"  value="<?php 
+
+                $whereArr=array('customer_no'=>$item['result'][0]->customer_id);
+                $customer_details =$this->Common_model->getAllDataWithMultipleWhere('Customer',$whereArr,'customer_id');                                                    
+
+                echo $customer_details['result'][0]->customer_name; ?>" readonly >
+                <br>
+
+                </div>
+
+                                
+                                
+                                
+                 <div class="form-group">
+
+                    <label class="control-label">Phone Number</label>    
+                    <input  type="text" class="form-control test"  value="<?php 
+
+                    $whereArr=array('customer_no'=>$item['result'][0]->customer_id);
+                    $customer_details =$this->Common_model->getAllDataWithMultipleWhere('Customer',$whereArr,'customer_id');                                                    
+
+                    echo $customer_details['result'][0]->customer_phone; ?>" readonly>
+                    <br>
+
+                    </div>
+
+                            
+                                    
+                  <div class="form-group col-lg-12 " >
+                      <?php $item_array=explode(",",$item['result'][0]->item);
+                            
+                            $price_array=explode(",",$item['result'][0]->base_price);
+                            $quantity_array=explode(",",$item['result'][0]->quantity);
+                          
+                            ?>
+                         <div class="col-lg-6">
+                                   <label>Item Name</label><br>
+                               <?php $i=0; foreach($item_array as $items){
+                                          
+                                            
+                                         $whereArr=array('item_id'=>$items);
+                                          $item_details =$this->Common_model->getAllDataWithMultipleWhere('Item',$whereArr,'item_id'); 
+                             
+                             ?>
+                                 <div>
+                                     <label><?php echo ucfirst($item_details['result'][0]->item_name)."*".$quantity_array[$i];?></label></div>
+                                  <?php $i++; }?>
+                             
+                                  <br>
+                               </div>
+                      
+                      
+                      
+                      
+                        
+                      
+                      
+                      
+                      
+                             <div class="col-lg-6">
+                                   <label>Amount</label><br>
+                               <?php $i=0; foreach($price_array as $price){
+                                       
+                                 $total_price=$quantity_array[$i]*$price; ?>
+                                <div>
+                                 <label><?php echo "Rs ".$total_price;?></label>
+                                 </div>
+                                  <?php $i++; } ?>
+                             
+                                  <br>
+                               </div>
+                      
+                      
+                      
+                           
+                    </div>
+                                    
+                                    
+                                    
+                    <div class="form-group">
+                                    
+                    <label class="control-label">Total Amount</label>    
+                    <input  type="text" class="form-control test"  value="<?php echo "Rs ".$item['result'][0]->paidAmount; ?>" readonly >
+                    <br>
+        
+                    </div>
+                                    
+                                    
+                                    
+             
+               
+               
+                                           
+                  
+                                   
+                      
+                                
+                                    </div>
+                                
+                                </div>
+                
+                               
+                        
+                    </section>
+            </div>
+            </div>
+    </section>
+            </section>
+
+
+    
+            

@@ -1,0 +1,90 @@
+<!--table id="example" class="table table-striped table-bordered example_cbd_table" cellspacing="0" width="100%">      
+                       
+                       
+                   <thead>
+                   <tr>
+                                   <th class="numeric">Item Name</th>
+                                    <th class="numeric">Item stock</th>
+                                    <th class="numeric">Tax</th>
+                                    <th class="numeric">Price with tax</th>
+                                   
+                                    <th class="numeric">Status</th>
+                       
+                                    <th class="numeric">Option</th>
+                                    
+                                </tr>
+                                </thead>
+                               
+                                <tbody id="mytable">
+                                 
+                                    <?php  
+    if($material['num_row']>0 && $material['result'][0]->status!=2){
+          if(count($listing)>0){
+//             echo"<pre>";
+//              print_r($listing);
+         foreach ($listing['result'] as $row)  
+         { 
+             if($row->status==1 || $row->status==0){
+                
+            ?>
+                <tr> 
+               <td><?php echo ucfirst($row->item_name);?></td> 
+                <td><?php echo $row->stock;?></td> 
+
+                     <td><?php echo $row->tax;?></td> 
+                    <td><?php echo $row->final_price;?></td>
+                    <td>
+                                        <?php
+                                    //echo $reviewDtls->status ;
+                                        if($row->status == 1)
+                                        {
+                                        ?>
+                                        <span style="cursor:pointer;float:center" title="Active Item" onclick="changeStauts('<?php echo $row->item_id;?>', 0);">Active
+                                           <i class="fa fa-check-circle"></i>
+                                        </span>
+                                        <?php
+                                        } 
+                                        else
+                                        {
+                                        ?>
+                                        <span style="cursor:pointer;float:center" title="Inactive Item" onclick="changeStauts('<?php echo $row->item_id;?>', 1);">Inactive
+                                          <i class="fa fa-ban"></i>
+                                        </span>
+                                        <?php
+                                        }
+                                        ?>
+                                    </td>
+           
+          
+              
+                    
+                    <td>
+                       <i class="fa fa-edit" aria-hidden="true" onclick="editForm('<?php echo $row->item_id;?>');"></i>        
+                    
+                     <i class="fa fa-trash-o" aria-hidden="true" onclick="deleteUnit('<?php echo $row->item_id;?>');"></i>
+                    </td>
+            </tr> 
+        <?php }
+             
+                           
+         }
+          }
+    }
+                                    else{
+                                       // echo "1";
+                                    //$var="confirm";
+                                 echo "<script>alert('Please add material first');
+                                location.href='".base_url()."Material_cont';
+                                    
+                                 </script>";
+                                        
+                                        
+                                    }
+         ?>
+                              
+                                </tbody>
+                            
+                   <tfoot>
+                   </tfoot>
+                   </table-->
+                 

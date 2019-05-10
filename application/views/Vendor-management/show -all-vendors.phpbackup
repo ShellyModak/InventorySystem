@@ -1,0 +1,255 @@
+<!--main content start-->
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+   <section id="main-content">
+       <section class="wrapper">
+       <!-- page start-->
+
+       <div class="row">
+           <div class="col-sm-12">
+               
+            <?php
+           if($this->session->userdata('error_msg') !='')
+           {
+               ?>
+               
+               <div class="alert alert-danger message">
+                   <center><strong>Sorry! </strong><?php echo $this->session->userdata('error_msg'); ?><span id="error_msg" class=""></span></center>
+               </div>
+               <?php
+                $this->session->unset_userdata('error_msg');
+           }
+                  if($this->session->userdata('msg') !='')
+           {
+              ?>               
+              <div class="alert alert-success message">
+                  <center><strong>Success! </strong><span class=""><?php echo $this->session->userdata('msg'); ?></span> </center>
+               </div>
+              <?php
+            $this->session->unset_userdata('msg');
+          } 
+              ?>
+
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               <section class="panel">
+                   <header class="panel-heading">
+                       Vendor Details
+                      
+                   </header>
+                   <div class="panel-body">
+                       <a href='<?php echo base_url(); ?>Vendormanagement/profile?m=a ' ><button type="button" class="btn btn-primary btn pull-right" >Add new Vendor</button></a>
+                   <div class="adv-table">
+                       
+                   <table  class="display table table-bordered table-striped" id="dynamic-table">
+                   <thead>
+                   <tr>
+                                   
+                                    <th class="numeric">Vendor Id</th>
+                                    <th class="numeric">Name</th>
+                                    <th class="numeric">Phonenumber</th>
+                                    <th class="numeric">Material</th>
+                                       <th class="numeric">Status</th>
+                                    <th class="numeric">Action</th>
+                                    
+                                    <th class="numeric">Option</th>
+                                    
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    <?php  
+                               
+          if(count($listing)>0){
+             //echo"<pre>";
+             // print_r($listing);
+         foreach ($listing['result'] as $row)  
+         { 
+             
+             
+             $rawmaterial=array();
+            
+             $data=$this->Common_model->find_in_set('RawMaterial',$row->id);
+             if($data['num_row']>0)
+             {
+                    
+                    foreach($data['result'] as $raw)
+                    {
+                      array_push($rawmaterial,ucfirst($raw->material_name));
+                     
+                    }
+                $rawmaterial = implode(",",$rawmaterial); 
+             }
+             else
+             {
+                 $rawmaterial="";
+             }
+             
+
+            ?>
+                <tr> 
+                <td><?php echo $row->id;?></td> 
+                <td><?php echo ucfirst($row->name);?></td> 
+                <td><?php echo $row->phoneno;?></td>
+                <td><?php echo $rawmaterial;?>
+                
+                
+                    <button type="button" class="w3-button w3-circle w3-teal" onclick="call_modal('<?php echo $row->id;?>')" >+</button></td>
+                    
+<!--                    modal-->
+                     <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                          <h4 class="modal-title">Add raw material</h4>
+                      </div>
+                      <div id="modal_response"></div>
+                  </div>
+              </div>
+          </div>
+
+                    
+                    
+                    
+                    
+                <td>    
+                 <?php
+           
+                if($row->status == 1)
+                {
+                ?>
+                <span style="cursor:pointer;float:center" title="Active Review" onclick="changeStatus('<?php echo  $row->id;?>', 0);">Active
+                   <i class="fa fa-check-circle"></i>
+                </span>
+                <?php
+                } 
+                else
+                {
+                ?>
+                <span style="cursor:pointer;float:center" title="Inactive Review" onclick="changeStatus('<?php echo  $row->id;?>', 1);">Inactive
+                  <i class="fa fa-ban"></i>
+                </span>
+                <?php
+                }
+                ?>    
+             
+                    </td>    
+              <td><a href='<?php echo base_url(); ?>Billingmanagement/showbill/<?php echo $row->id;?>' ><button type="button" class="btn btn-primary" >Billing</button></a>
+             
+               
+                 <button class="btn btn-primary" type="button" onclick="del('<?php echo  $row->id;?>')">Delete</button>                    
+                   
+             </td>      
+                    
+                    
+                    
+          <td><a href='<?php echo base_url(); ?>Vendormanagement/profile?id=<?php echo $row->id ;?>&m=e ' ><button type="button" class="btn btn-primary" >Edit</button></a>
+             </td>   
+       
+                        
+            </tr> 
+        <?php }
+          }
+         ?>
+                                
+                                </tbody>
+                   <tfoot>
+                   </tfoot>
+                   </table>
+                       
+                   </div>
+                   </div>
+               </section>
+           </div>
+       </div>
+
+<!--          modal starts   -->
+        
+           
+           
+           
+                  
+       <!-- modal end-->
+       </section>
+   </section>
+   <!--main content end-->
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script type="text/javascript">
+  
+function changeStatus(id,status)
+{
+    
+    var confirmstatus=confirm('Are you sure you want to change status');
+    if(confirmstatus)
+    {
+        location.href="<?php echo base_url(); ?>Vendormanagement/profile?id="+id+"&m=s&status="+status;
+    }
+}
+    
+    
+function del(id)
+{
+    
+    var del=confirm('Are you sure you want to delete');
+    if(del)
+    {
+        location.href="<?php echo base_url(); ?>Vendormanagement/profile?id="+id+"&m=d";
+    }
+}
+    
+ 
+function checkbox()  
+    {  
+           
+                    
+                     $('#checkbox').submit(); 
+            
+    
+}
+    
+    
+    
+function call_modal(vendor_id)  
+    {  
+        
+        
+        $.ajax({
+                    url:"<?php echo base_url();?>Vendormanagement/show_material",   
+                    data:{vendor_id:vendor_id},
+                    type:"POST",            
+                    dataType:"text",
+                    async: false,
+                    success:function(response)
+                    {    
+                         $("#myModal").modal('show');
+                        $("#modal_response").html(response);               
+                    }
+                                                 
+                                      
+                                        
+                });
+            
+          
+         
+           
+    
+}
+    
+    
+    
+    </script>
